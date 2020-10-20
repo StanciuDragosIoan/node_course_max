@@ -18,7 +18,7 @@ const requestHandler = (req, res) => {
                 <input type='text' name='message'>
                 <button type='submit'>Send</button>
               </form>
-            </body>`
+            </body>`,
     );
     res.write("</html>");
     //return so we break execution
