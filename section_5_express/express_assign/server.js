@@ -11,6 +11,8 @@ const app = express();
 
 //parse body data
 app.use(bodyparser.urlencoded({ extended: false }));
+//serve files statically (read access only)
+app.use(express.static(path.join(__dirname, "public")));
 
 //use routes
 
