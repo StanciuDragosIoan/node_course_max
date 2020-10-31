@@ -4,7 +4,7 @@ const adminData = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const bodyparser = require("body-parser");
 const path = require("path");
-// const rootDir = require("./utils/path");
+const rootDir = require("./utils/path");
 
 //create express app
 const app = express();
@@ -12,7 +12,7 @@ const app = express();
 //config template engine
 
 //pug
-app.set("view engine", "pug");
+app.set("view engine", "ejs");
 app.set("views", "views");
 
 //parse body data
@@ -32,7 +32,7 @@ app.use((req, res, next) => {
   // res.status(404).send("<h1>404 page not found X_X!</h1>");
   // res.sendFile(path.join(__dirname, "views", "404.html"));
   //pass data to pug template engine
-  res.render("404", { pageTitle: "404 Not FOund" });
+  res.render("404", { pageTitle: "404 Not FOund", path:null });
 });
 
 app.listen(3000);
