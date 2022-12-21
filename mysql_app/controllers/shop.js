@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const Cart = require("../models/cart");
+const User = require("../models/user");
 
 exports.getProducts = (req, res, next) => {
   Product.findAll()
@@ -38,32 +39,43 @@ exports.getIndex = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.getCart = (req, res, next) => {
-  Cart.getCart((cart) => {
-    Product.fetchAll((products) => {
-      const cartProducts = [];
-      for (product of products) {
-        const cartProductData = cart.products.find(
-          (prod) => prod.id === product.id
-        );
-        if (cartProductData) {
-          cartProducts.push({ productData: product, qty: cartProductData.qty });
-        }
-      }
-      res.render("shop/cart", {
-        path: "/cart",
-        pageTitle: "Your Cart",
-        products: cartProducts,
-      });
-    });
+exports.getCart = async (req, res, next) => {
+  const user = await User.findOne({ where: { id: 1 } });
+  const cart = await user.getCart();
+  const products = await cart.getProducts();
+  console.log(cart);
+  console.log(products);
+  res.render("shop/cart", {
+    path: "/cart",
+    pageTitle: "Your Cart",
+    products: products,
   });
 };
 
-exports.postCart = (req, res, next) => {
+exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findById(prodId, (product) => {
-    Cart.addProduct(prodId, product.price);
-  });
+  const user = await User.findOne({ where: { id: 1 } });
+  const cart = await user.getCart();
+
+  const cartProds = cart.getProducts({ where: { id: prodId } });
+  let product;
+  if (cartProds.length > 0) {
+    product = products[0];
+  }
+
+  let newQty = 1;
+  if (product) {
+    // qty adjust
+  }
+  const prodToADd = await Product.findOne({ where: { id: prodId } });
+
+  await cart.addProduct(prodToADd, { through: { quantity: newQty } });
+
+  // Product.findById(prodId, (product) => {
+  //   Cart.addProduct(prodId, product.price);
+  // });
+
+  //THIS WILL BREAK AND WE FIX IT
   res.redirect("/cart");
 };
 
